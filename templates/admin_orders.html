@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-panel">
+    <h2>إدارة الطلبات</h2>
+    
+    <div class="orders-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>اسم العميل</th>
+                    <th>رقم الهاتف</th>
+                    <th>العنوان</th>
+                    <th>المنتجات</th>
+                    <th>المبلغ الإجمالي</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                    <th>الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr class="{% if order.status == 'pending' %}new-order{% endif %}">
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.full_name }}</td>
+                    <td>{{ order.phone }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>
+                        <button onclick="showOrderDetails({{ order.id }})" class="view-details-btn">
+                            عرض المنتجات
+                        </button>
+                    </td>
+                    <td>{{ order.total }} د.ك</td>
+                    <td>
+                        <select onchange="updateOrderStatus({{ order.id }}, this.value)" class="status-select">
+                            <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>قيد المعالجة</option>
+                            <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>جاري التجهيز</option>
+                            <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>تم الشحن</option>
+                            <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>تم التوصيل</option>
+                            <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>ملغي</option>
+                        </select>
+                    </td>
+                    <td>{{ order.date_created.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <button onclick="printOrder({{ order.id }})" class="print-btn">
+                            طباعة
+                        </button>
+                        <button onclick="deleteOrder({{ order.id }})" class="delete-btn">
+                            حذف
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.new-order {
+    background-color: #fff3cd;
+}
+
+.status-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 120px;
+}
+
+.view-details-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.print-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* حالات الطلب */
+.status-pending { background-color: #ffd700; }
+.status-processing { background-color: #87CEEB; }
+.status-shipped { background-color: #DDA0DD; }
+.status-delivered { background-color: #90EE90; }
+.status-cancelled { background-color: #ffcccb; }
+</style>
+
+<script>
+function showOrderDetails(orderId) {
+    // إضافة نافذة منبثقة لعرض تفاصيل الطلب
+    alert('سيتم عرض تفاصيل الطلب رقم ' + orderId);
+}
+
+function updateOrderStatus(orderId, status) {
+    // إرسال طلب لتحديث حالة الطلب
+    fetch(`/admin/orders/${orderId}/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: status })
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+    });
+}
+
+function printOrder(orderId) {
+    // فتح نافذة طباعة الطلب
+    window.open(`/admin/orders/${orderId}/print`, '_blank');
+}
+
+function deleteOrder(orderId) {
+    if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+        fetch(`/admin/orders/${orderId}/delete`, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

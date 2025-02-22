@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="print-order">
+    <h2>تفاصيل الطلب #{{ order.id }}</h2>
+    <div class="order-info">
+        <div class="customer-info">
+            <h3>معلومات العميل</h3>
+            <p><strong>الاسم:</strong> {{ order.full_name }}</p>
+            <p><strong>العنوان:</strong> {{ order.address }}</p>
+            <p><strong>الهاتف:</strong> {{ order.phone }}</p>
+            <p><strong>التاريخ:</strong> {{ order.date_created.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>الحالة:</strong> 
+                {% if order.status == 'pending' %}قيد المعالجة
+                {% elif order.status == 'processing' %}جاري التجهيز
+                {% elif order.status == 'shipped' %}تم الشحن
+                {% elif order.status == 'delivered' %}تم التوصيل
+                {% else %}ملغي{% endif %}
+            </p>
+        </div>
+        
+        <div class="products-list">
+            <h3>المنتجات</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>المنتج</th>
+                        <th>الكمية</th>
+                        <th>السعر</th>
+                        <th>المجموع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }} د.ك</td>
+                        <td>{{ item.total }} د.ك</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>المجموع الكلي</strong></td>
+                        <td><strong>{{ order.total }} د.ك</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    
+    <div class="print-actions">
+        <button onclick="window.print()">طباعة</button>
+        <button onclick="window.close()">إغلاق</button>
+    </div>
+</div>
+
+<style>
+@media print {
+    .print-actions {
+        display: none;
+    }
+    body {
+        background: white;
+    }
+    .print-order {
+        padding: 0;
+    }
+}
+
+.print-order {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.products-table th,
+.products-table td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
+
+.print-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+</style>
+{% endblock %}

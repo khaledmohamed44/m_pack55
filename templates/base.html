@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ settings.header_text if settings else 'شركة عالم البلاستك' }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: {{ settings.primary_color }};
+            --secondary-color: {{ settings.secondary_color }};
+            --accent-color: {{ settings.accent_color }};
+            --text-color: {{ settings.text_color }};
+            --background-opacity: 0.4;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{{ settings.background_image if settings else '/static/images/default-background.jpg' }}");
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, var(--background-opacity));
+            z-index: -1;
+        }
+        
+        .navbar {
+            background-color: rgba(19, 150, 148, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .navbar a:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .product-card h3 {
+            margin: 1rem;
+            color: var(--gray-dark);
+        }
+        
+        .product-card .price {
+            margin: 1rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* تحسين الأزرار */
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            background-color: #108583;
+        }
+
+        /* تحسين النماذج */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        /* تحسين عناوين الصفحات */
+        h1, h2, h3 {
+            color: var(--gray-dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* تحسين رسائل التنبيه */
+        .flash-message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* تحسين الجداول */
+        table {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* تحسين التجاوب مع الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .navbar a {
+                margin: 0.5rem 0;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        .social-contacts {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .social-contacts a {
+            display: block;
+            padding: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .social-contacts a:hover {
+            transform: scale(1.1);
+        }
+
+        .social-contacts i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/">الرئيسية</a>
+            <a href="{{ url_for('products') }}">المنتجات</a>
+            <a href="{{ url_for('about') }}">من نحن</a>
+            <a href="{{ url_for('contact') }}">تواصل معنا</a>
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="/admin">لوحة التحكم</a>
+                {% endif %}
+                <a href="/cart">السلة</a>
+                <a href="/logout">تسجيل خروج</a>
+            {% else %}
+                <a href="/login">تسجيل دخول</a>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    
+    <div class="social-contacts">
+        <a href="https://wa.me/96556502009" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            <span>واتساب</span>
+        </a>
+        <a href="tel:+96556502009">
+            <i class="fas fa-phone"></i>
+            <span>اتصال</span>
+        </a>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="contact-info">
+                <h3>معلومات التواصل</h3>
+                <a href="tel:+96556502009">
+                    <i class="fas fa-phone"></i>
+                    +965 5650 2009
+                </a>
+                <a href="tel:+96550781493">
+                    <i class="fas fa-mobile-alt"></i>
+                    +965 5078 1493
+                </a>
+                <a href="https://maps.app.goo.gl/188HQpp" target="_blank">
+                    <i class="fas fa-map-marker-alt"></i>
+                    الشويخ الصناعية/شارع التمور/شارع 79
+                </a>
+            </div>
+            <div class="social-links">
+                <h3>تابعنا على</h3>
+                <a href="https://facebook.com/yourpage" target="_blank">
+                    <i class="fab fa-facebook"></i>
+                    Facebook
+                </a>
+                <a href="https://instagram.com/yourpage" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                    Instagram
+                </a>
+                <a href="https://twitter.com/yourpage" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                    Twitter
+                </a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

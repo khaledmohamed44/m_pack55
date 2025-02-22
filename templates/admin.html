@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-dashboard">
+    <h1>لوحة التحكم</h1>
+    
+    <div class="admin-menu">
+        <a href="{{ url_for('admin_products') }}" class="admin-card">
+            <h3>إدارة المنتجات</h3>
+            <p>إضافة، تعديل وحذف المنتجات</p>
+        </a>
+        
+        <a href="{{ url_for('admin_orders') }}" class="admin-card">
+            <h3>الطلبات</h3>
+            <p>عرض وإدارة طلبات العملاء</p>
+        </a>
+        
+        <a href="{{ url_for('admin_users') }}" class="admin-card">
+            <h3>المستخدمين</h3>
+            <p>إدارة حسابات المستخدمين</p>
+        </a>
+        
+        <a href="{{ url_for('admin_settings') }}" class="admin-card">
+            <h3>إعدادات الموقع</h3>
+            <p>تغيير خلفية الموقع وإعدادات أخرى</p>
+        </a>
+    </div>
+</div>
+
+<style>
+.admin-dashboard {
+    padding: 2rem;
+}
+
+.admin-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.admin-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: var(--gray-dark);
+    transition: transform 0.3s;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+}
+
+.admin-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.admin-card p {
+    color: var(--gray-dark);
+    margin: 0;
+}
+</style>
+{% endblock %}

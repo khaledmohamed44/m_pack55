@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-panel">
+    <h2>إدارة المنتجات</h2>
+    <form method="POST" class="add-product-form" enctype="multipart/form-data">
+        <h3>إضافة منتج جديد</h3>
+        <div class="form-group">
+            <label>اسم المنتج:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>الوصف:</label>
+            <textarea name="description" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>السعر:</label>
+            <input type="number" name="price" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>صورة المنتج:</label>
+            <input type="file" name="image" accept="image/*" required class="file-input">
+            <div class="image-preview"></div>
+        </div>
+        <button type="submit">إضافة المنتج</button>
+    </form>
+
+    <div class="products-list">
+        <h3>المنتجات الحالية</h3>
+        <table>
+            <tr>
+                <th>الاسم</th>
+                <th>السعر</th>
+                <th>الإجراءات</th>
+            </tr>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>
+                    <a href="/admin/products/edit/{{ product.id }}">تعديل</a>
+                    <a href="/admin/products/delete/{{ product.id }}">حذف</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<style>
+.file-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px dashed var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.image-preview {
+    margin-top: 1rem;
+    max-width: 200px;
+    max-height: 200px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.image-preview img {
+    width: 100%;
+    height: auto;
+}
+</style>
+
+<script>
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+    const preview = document.querySelector('.image-preview');
+    preview.innerHTML = '';
+    
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+</script>
+{% endblock %}

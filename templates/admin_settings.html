@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="settings-panel">
+    <h2>إعدادات الموقع</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- نموذج واحد رئيسي للإعدادات -->
+    <form method="POST" enctype="multipart/form-data" class="settings-form">
+        {{ csrf_token() if csrf_token }}
+        <div class="settings-section">
+            <h3>الألوان</h3>
+            <div class="colors-grid">
+                <div class="color-item">
+                    <label>اللون الرئيسي:</label>
+                    <div class="color-picker">
+                        <input type="color" name="primary_color" value="{{ settings.primary_color }}" 
+                               data-target="--primary-color" required>
+                        <span class="color-value">{{ settings.primary_color }}</span>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <label>لون الخلفية:</label>
+                    <div class="color-picker">
+                        <input type="color" name="secondary_color" value="{{ settings.secondary_color }}"
+                               data-target="--secondary-color">
+                        <span class="color-value">{{ settings.secondary_color }}</span>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <label>لون التأكيد:</label>
+                    <div class="color-picker">
+                        <input type="color" name="accent_color" value="{{ settings.accent_color }}"
+                               data-target="--accent-color">
+                        <span class="color-value">{{ settings.accent_color }}</span>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <label>لون النصوص:</label>
+                    <div class="color-picker">
+                        <input type="color" name="text_color" value="{{ settings.text_color }}"
+                               data-target="--text-color">
+                        <span class="color-value">{{ settings.text_color }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>الخلفية</h3>
+            <div class="background-options">
+                <div class="current-background">
+                    <h4>الخلفية الحالية:</h4>
+                    <img src="{{ settings.background_image }}" alt="خلفية الموقع">
+                </div>
+                
+                <div class="form-group">
+                    <label>تحميل خلفية جديدة:</label>
+                    <input type="file" name="background" accept="image/*" class="file-input">
+                    <div class="image-preview"></div>
+                </div>
+                
+                <div class="background-opacity">
+                    <label>شفافية الخلفية:</label>
+                    <input type="range" min="0" max="100" value="60" class="opacity-slider"
+                           oninput="updateBackgroundOpacity(this.value)">
+                    <span class="opacity-value">60%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>معلومات التواصل</h3>
+            <div class="contact-settings">
+                <div class="form-group">
+                    <label>رقم الهاتف الأول:</label>
+                    <input type="text" name="phone1" value="{{ settings.phone1 }}" required 
+                           placeholder="+965 xxxxxxxx" pattern="\+965[0-9]{8}">
+                    <small class="form-hint">يجب أن يبدأ الرقم بـ +965 متبوعاً بـ 8 أرقام</small>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف الثاني:</label>
+                    <input type="text" name="phone2" value="{{ settings.phone2 }}" 
+                           placeholder="+965 xxxxxxxx" pattern="\+965[0-9]{8}">
+                    <small class="form-hint">يجب أن يبدأ الرقم بـ +965 متبوعاً بـ 8 أرقام</small>
+                </div>
+                <div class="form-group">
+                    <label>رقم الواتساب:</label>
+                    <input type="text" name="whatsapp" value="{{ settings.whatsapp }}" required
+                           placeholder="+965 xxxxxxxx" pattern="\+965[0-9]{8}">
+                    <small class="form-hint">يجب أن يبدأ الرقم بـ +965 متبوعاً بـ 8 أرقام</small>
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني:</label>
+                    <input type="email" name="email" value="{{ settings.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label>العنوان:</label>
+                    <textarea name="address" required>{{ settings.address }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>رابط الموقع على الخريطة:</label>
+                    <input type="url" name="location_url" value="{{ settings.location_url }}" required>
+                </div>
+            </div>
+            
+            <h4>روابط التواصل الاجتماعي</h4>
+            <div class="social-settings">
+                <div class="form-group">
+                    <label>رابط فيسبوك:</label>
+                    <input type="url" name="facebook_url" value="{{ settings.facebook_url }}">
+                </div>
+                <div class="form-group">
+                    <label>رابط انستجرام:</label>
+                    <input type="url" name="instagram_url" value="{{ settings.instagram_url }}">
+                </div>
+                <div class="form-group">
+                    <label>رابط تويتر:</label>
+                    <input type="url" name="twitter_url" value="{{ settings.twitter_url }}">
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h3>إدارة المستخدمين</h3>
+            <div class="admin-password-section">
+                <h4>تغيير كلمة مرور المسؤول</h4>
+                <div class="form-group">
+                    <label>كلمة المرور الحالية:</label>
+                    <input type="password" name="current_password">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة:</label>
+                    <input type="password" name="new_password">
+                </div>
+            </div>
+
+            <!-- تعديل قسم إنشاء المستخدم -->
+            <div class="create-user-section">
+                <h4>إنشاء مستخدم جديد</h4>
+                <div class="form-group">
+                    <label>اسم المستخدم:</label>
+                    <input type="text" name="new_username">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور:</label>
+                    <input type="password" name="new_user_password">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_admin">
+                        صلاحيات مسؤول
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>صفحة من نحن</h3>
+            <div class="about-settings">
+                <div class="form-group">
+                    <label>عنوان الصفحة:</label>
+                    <input type="text" name="about_title" value="{{ settings.about_title }}" required>
+                </div>
+                <div class="form-group">
+                    <label>وصف الشركة:</label>
+                    <textarea name="about_description" rows="4" required>{{ settings.about_description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>خدماتنا (كل خدمة في سطر جديد):</label>
+                    <textarea name="about_services" rows="6" required>{{ settings.about_services }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- زر حفظ واحد للنموذج بأكمله -->
+        <button type="submit" class="save-settings" name="action" value="save_settings">حفظ جميع الإعدادات</button>
+    </form>
+</div>
+
+<style>
+.settings-panel {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+}
+
+.color-picker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.color-input {
+    width: 100px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-settings {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.current-background img {
+    max-width: 300px;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.settings-section {
+    margin-top: 2rem;
+}
+
+.current-background {
+    margin-bottom: 2rem;
+}
+
+.file-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px dashed var(--primary-color);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.image-preview {
+    max-width: 300px;
+    margin-top: 1rem;
+}
+
+.image-preview img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.colors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.color-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-picker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.color-value {
+    font-family: monospace;
+}
+
+.background-opacity {
+    margin-top: 1rem;
+}
+
+.opacity-slider {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+.contact-settings, .social-settings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+h4 {
+    margin-top: 2rem;
+    color: var(--primary-color);
+}
+
+.admin-password-section,
+.create-user-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.password-form,
+.user-form {
+    max-width: 400px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+}
+
+.form-hint {
+    display: block;
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+input:invalid {
+    border-color: #ff0000;
+}
+
+.flash-messages {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+input:invalid {
+    border-color: #c62828;
+    background-color: #ffebee;
+}
+
+.form-hint {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+</style>
+
+<script>
+// معاينة الصورة
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+    const preview = document.querySelector('.image-preview');
+    preview.innerHTML = '';
+    
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            preview.appendChild(img);
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+// معاينة تغيير الألوان مباشرة
+document.querySelectorAll('input[type="color"]').forEach(input => {
+    input.addEventListener('input', function() {
+        const target = this.dataset.target;
+        document.documentElement.style.setProperty(target, this.value);
+        this.nextElementSibling.textContent = this.value;
+    });
+});
+
+// تحديث شفافية الخلفية
+function updateBackgroundOpacity(value) {
+    document.querySelector('.opacity-value').textContent = value + '%';
+    document.documentElement.style.setProperty(
+        '--background-opacity',
+        (100 - value) / 100
+    );
+}
+</script>
+{% endblock %}

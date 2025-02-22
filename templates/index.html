@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero-section">
+    <h1>{{ settings.header_text }}</h1>
+    <p class="subtitle">{{ settings.header_description }}</p>
+</div>
+
+<div class="category-filters">
+    <button class="filter-btn active">جميع المنتجات</button>
+    <button class="filter-btn">منتجات بلاستيكية</button>
+    <button class="filter-btn">منتجات ورقية</button>
+</div>
+
+<div class="products-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <div class="product-image">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="description">{{ product.description }}</p>
+            <div class="price-action">
+                <span class="price">{{ product.price }} د.ك</span>
+                <a href="{{ url_for('product_detail', product_id=product.id) }}" class="view-details">عرض التفاصيل</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .hero-section {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: linear-gradient(to left, #139694, #108583);
+        color: white;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .category-filters {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-btn {
+        background-color: transparent;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .filter-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .product-card {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .product-image {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .product-info {
+        padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .price-action {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .view-details {
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}

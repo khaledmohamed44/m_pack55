@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-panel">
+    <h2>الرسائل الواردة</h2>
+    
+    <div class="messages-list">
+        {% for message in messages %}
+        <div class="message-card {% if message.status == 'unread' %}unread{% endif %}">
+            <div class="message-header">
+                <h3>{{ message.name }}</h3>
+                <span class="date">{{ message.date_sent.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="message-contact">
+                <span><i class="fas fa-envelope"></i> {{ message.email }}</span>
+                {% if message.phone %}
+                <span><i class="fas fa-phone"></i> {{ message.phone }}</span>
+                {% endif %}
+            </div>
+            <div class="message-content">
+                {{ message.message }}
+            </div>
+            <div class="message-actions">
+                <button onclick="markAsRead({{ message.id }})">
+                    {% if message.status == 'unread' %}
+                    تحديد كمقروء
+                    {% else %}
+                    تم القراءة
+                    {% endif %}
+                </button>
+                <button onclick="deleteMessage({{ message.id }})" class="delete-btn">
+                    حذف
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.messages-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.message-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.message-card.unread {
+    border-right: 4px solid var(--primary-color);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.message-contact {
+    display: flex;
+    gap: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.message-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.delete-btn {
+    background-color: var(--accent-color);
+}
+</style>
+{% endblock %}

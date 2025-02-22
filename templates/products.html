@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="products-page">
+    <h1>منتجاتنا</h1>
+    
+    <div class="filters">
+        <button class="filter-btn active" data-category="all">جميع المنتجات</button>
+        <button class="filter-btn" data-category="plastic">منتجات بلاستيكية</button>
+        <button class="filter-btn" data-category="paper">منتجات ورقية</button>
+    </div>
+
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            </div>
+            <div class="product-info">
+                <h3>{{ product.name }}</h3>
+                <p class="description">{{ product.description }}</p>
+                <div class="price-action">
+                    <span class="price">{{ product.price }} د.ك</span>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="view-details">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.products-page {
+    padding: 2rem;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1.5rem;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.product-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}
