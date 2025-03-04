@@ -1,10 +1,5 @@
-worker_class = 'sync'
+bind = "0.0.0.0:$PORT"
 workers = 1
 threads = 1
-bind = "0.0.0.0:$PORT"
 timeout = 120
-keepalive = 5
-max_requests = 100
-max_requests_jitter = 10
 preload_app = False
-graceful_timeout = 30

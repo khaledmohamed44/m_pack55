@@ -2,9 +2,7 @@ services:
   - type: web
     name: plastic-world
     env: python
-    buildCommand: |
-      pip install --upgrade pip
-      pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn wsgi:application
     envVars:
       - key: PYTHON_VERSION
@@ -15,12 +13,6 @@ services:
         value: production
       - key: WEB_CONCURRENCY
         value: 1
-      - key: PYTHONUNBUFFERED
-        value: true
-    disk:
-      name: uploads
-      mountPath: /opt/render/project/src/static/uploads
-      sizeGB: 1
 
 databases:
   - name: plastic-world-db
