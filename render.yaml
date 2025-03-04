@@ -3,9 +3,23 @@ services:
     name: plastic-world
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn app:app --config gunicorn_config.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.7
+      - key: SECRET_KEY
+        generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///plastic_world.db
+        fromDatabase:
+          name: plastic-world-db
+          property: connectionString
+      - key: FLASK_ENV
+        value: production
+      - key: WEB_CONCURRENCY
+        value: 2
+      - key: MAX_REQUESTS
+        value: 1000
+
+databases:
+  - name: plastic-world-db
+    plan: free
