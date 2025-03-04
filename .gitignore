@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 *.pyc
 __pycache__/
 .env
@@ -13,20 +12,4 @@ instance/
 htmlcov/
 dist/
 build/
-=======
-*.pyc
-__pycache__/
-.env
-*.db
-static/uploads/*
-!static/uploads/.gitkeep
-venv/
-.vscode/
-instance/
-.pytest_cache/
-.coverage
-htmlcov/
-dist/
-build/
->>>>>>> a7cdc5c4d3159e24e80dc8157e670c03bb65388e
 *.egg-info/
